@@ -11,3 +11,11 @@ RUN a2enmod rewrite
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
+
+# Apache will listen on whatever $PORT Railway provides at runtime
+RUN echo 'Listen ${PORT}' > /etc/apache2/ports.conf
+RUN sed -i 's/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/g' /etc/apache2/sites-available/000-default.conf
+
+EXPOSE 80
+
+CMD ["sh", "-c", "apache2-foreground"]
