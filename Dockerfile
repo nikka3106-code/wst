@@ -12,10 +12,9 @@ RUN a2enmod rewrite
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html
 
-# Apache will listen on whatever $PORT Railway provides at runtime
-RUN echo 'Listen ${PORT}' > /etc/apache2/ports.conf
-RUN sed -i 's/<VirtualHost \*:80>/<VirtualHost *:${PORT}>/g' /etc/apache2/sites-available/000-default.conf
-
 EXPOSE 80
 
-CMD ["sh", "-c", "apache2-foreground"]
+# At container start, inject the real $PORT value into Apache config, then launch
+CMD bash -c "sed -i \"s/Listen 80/Listen \$PORT/g\" /etc/apache2/ports.conf && \
+    sed -i \"s/<VirtualHost \\*:80>/<VirtualHost *:\$PORT>/g\" /etc/apache2/sites-available/000-default.conf && \
+    apache2-foreground"
