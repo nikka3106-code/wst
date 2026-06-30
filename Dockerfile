@@ -22,3 +22,4 @@ EXPOSE 8080
 CMD bash -c "rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* && \
     a2enmod mpm_prefork && \
     apache2-foreground"
+
