@@ -236,7 +236,7 @@ $logs = $db->query(
             <td><?= $row['humidity'] ?></td>
             <td><?= $row['gas_level'] ?></td>
             <td><?= $row['flame_detected'] ? '🔥 YES' : '✅ NO' ?></td>
-            <td><?= $row['created_at'] ?></td>
+            <td><?= $row['created_at_local'] ?></td>
           </tr>
           <?php endwhile; ?>
         </tbody>
