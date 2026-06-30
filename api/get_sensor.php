@@ -31,7 +31,8 @@ $actuator = $db->query(
 // Last 20 incidents
 $logs = [];
 $res  = $db->query(
-    'SELECT i.*, u.fullname
+    'SELECT i.*, u.fullname,
+            DATE_ADD(i.created_at, INTERVAL 8 HOUR) AS created_at_local
      FROM incidents i
      JOIN users u ON u.id = i.user_id
      ORDER BY i.created_at DESC
