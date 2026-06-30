@@ -205,7 +205,7 @@ async function pollSensors() {
     if (data.error) { setStatus('error', data.error); return; }
 
     if (data.sensor && data.sensor.recorded_at) {
-      const lastUpdate = new Date(data.sensor.recorded_at.replace(' ', 'T') + 'Z').getTime();
+      const lastUpdate = new Date(data.sensor.recorded_at.replace(/-/g, "/")).getTime();
       const nowTime    = new Date().getTime();
       
       if (nowTime - lastUpdate > 6000) {
