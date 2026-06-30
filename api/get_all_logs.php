@@ -65,7 +65,8 @@ $countStmt->close();
 $totalPages = ceil($totalRecords / $limit);
 
 // ── Get Records ──────────────────────────────────────────────
-$dataSQL = "SELECT i.*, u.fullname 
+$dataSQL = "SELECT i.*, u.fullname,
+                   DATE_ADD(i.created_at, INTERVAL 8 HOUR) AS created_at_local
             FROM incidents i 
             JOIN users u ON u.id = i.user_id 
             WHERE $whereSQL 
