@@ -370,7 +370,7 @@ function updateLog(logs) {
          <td>${humVal} %</td>
          <td>${gasVal} PPM</td>
          <td>${flameStatus}</td>
-         <td>${r.created_at}</td>
+        <td>${r.created_at_local}</td>
        </tr>
     `;
   }).join('');
