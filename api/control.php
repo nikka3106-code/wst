@@ -102,16 +102,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── Reset emergency flag / Turning OFF Emergency ──────────
     if ($action === 'reset') {
-    $db->query('UPDATE actuator_state SET pump=0, buzzer=0, fan=0, emergency=0');
-    
-    // Log manual de-escalation actions
-    $type = 'manual';
-    $sensor = $db->query('SELECT temperature, humidity, gas_level, flame_detected FROM sensor_data ORDER BY recorded_at DESC LIMIT 1')->fetch_assoc();
-    if (!$sensor) {
-        $sensor = ['temperature' => 0, 'humidity' => 0, 'gas_level' => 0, 'flame_detected' => 0];
-    }
-    
-    $ins = $db->prepare('INSERT INTO incidents (user_id, incident_type, temperature, humidity, gas_level, flame_detected) VALUES (?, ?, ?, ?, ?, ?)');
+        $db->query('UPDATE actuator_state SET pump=0, buzzer=0, fan=0, emergency=0');
+        
+        // Log manual de-escalation actions
+        $type = 'manual';
+        $sensor = $db->query('SELECT temperature, humidity, gas_level, flame_detected FROM sensor_data ORDER BY recorded_at DESC LIMIT 1')->fetch_assoc();
+        
+        $ins = $db->prepare('INSERT INTO incidents (user_id, incident_type, temperature, humidity, gas_level, flame_detected) VALUES (?, ?, ?, ?, ?, ?)');
         $ins->bind_param('isddii', $userId, $type, $sensor['temperature'], $sensor['humidity'], $sensor['gas_level'], $sensor['flame_detected']);
         $ins->execute();
         $ins->close();
@@ -139,27 +136,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $db->query("UPDATE actuator_state SET `{$device}` = {$value}");
 
         if ($value === 1) {
-    $sensor = $db->query('SELECT temperature, humidity, gas_level, flame_detected FROM sensor_data ORDER BY recorded_at DESC LIMIT 1')->fetch_assoc();
-    if (!$sensor) {
-        $sensor = ['temperature' => 0, 'humidity' => 0, 'gas_level' => 0, 'flame_detected' => 0];
-    }
-    $type = 'manual';
-    $ins  = $db->prepare('INSERT INTO incidents (user_id, incident_type, temperature, humidity, gas_level, flame_detected) VALUES (?, ?, ?, ?, ?, ?)');
-    $ins->bind_param('isddii', $userId, $type, $sensor['temperature'], $sensor['humidity'], $sensor['gas_level'], $sensor['flame_detected']);
-    $ins->execute();
-    $ins->close();
-}
+            $sensor = $db->query('SELECT temperature, humidity, gas_level, flame_detected FROM sensor_data ORDER BY recorded_at DESC LIMIT 1')->fetch_assoc();
+            $type = 'manual';
+            $ins  = $db->prepare('INSERT INTO incidents (user_id, incident_type, temperature, humidity, gas_level, flame_detected) VALUES (?, ?, ?, ?, ?, ?)');
+            $ins->bind_param('isddii', $userId, $type, $sensor['temperature'], $sensor['humidity'], $sensor['gas_level'], $sensor['flame_detected']);
+            $ins->execute();
+            $ins->close();
+        }
 
-    $row = $db->query('SELECT pump, buzzer, fan, emergency FROM actuator_state ORDER BY id DESC LIMIT 1')->fetch_assoc();
-    if (!$row) {
-        $row = ['pump' => 0, 'buzzer' => 0, 'fan' => 0, 'emergency' => 0];
-    }
-    echo json_encode([
-        'status' => 'ok',
-        'pump'   => (int) $row['pump'],
-        'buzzer' => (int) $row['buzzer'],
-        'fan'    => (int) $row['fan'],
-    ]);
+        $row = $db->query('SELECT pump, buzzer, fan, emergency FROM actuator_state ORDER BY id DESC LIMIT 1')->fetch_assoc();
+        echo json_encode([
+            'status' => 'ok',
+            'pump'   => (int) $row['pump'],
+            'buzzer' => (int) $row['buzzer'],
+            'fan'    => (int) $row['fan'],
+        ]);
         exit;
     }
 
