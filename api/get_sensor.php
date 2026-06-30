@@ -29,7 +29,6 @@ $actuator = $db->query(
 )->fetch_assoc() ?? ['pump' => 0, 'buzzer' => 0, 'fan' => 0, 'emergency' => 0, 'manual_override' => 0];
 
 // Last 20 incidents
-$logs = [];
 $res  = $db->query(
     'SELECT i.*, u.fullname,
             DATE_ADD(i.created_at, INTERVAL 8 HOUR) AS created_at_local
